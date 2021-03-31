@@ -10,7 +10,6 @@ int main()
   int N = n + r * 2;
 
   int (*t)[N] = calloc(N * N, sizeof(**t));
-  int (*out)[N] = malloc(N * N * sizeof(**out));
 
   for (int y = r; y < N - r; ++y)
     for (int x = r; x < N - r; ++x)
@@ -33,25 +32,19 @@ int main()
       for (int y2 = y - r; y2 <= y + r; ++y2)
         sum += t[y2][x + r];
 
-      out[y][x] = sum;
+      printf("%d ", sum);
 
       for (int y2 = y - r; y2 <= y + r; ++y2)
         sum -= t[y2][x - r];
     }
 
+    printf("\n");
+
     for (int x = 0; x < 2 * r; ++x)
       left_sum -= t[y - r][x];
   }
 
-  for (int y = r; y < N - r; ++y)
-  {
-    for (int x = r; x < N - r; ++x)
-      printf("%d ", out[y][x]);
-    printf("\n");
-  }
-
   free(t);
-  free(out);
 
   return 0;
 }
