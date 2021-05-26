@@ -3,14 +3,23 @@ cmake_minimum_required(VERSION 3.12)
 project(pi C)
 set(CMAKE_C_STANDARD 99)
 
-add_subdirectory(lab1)
-add_subdirectory(lab2)
-add_subdirectory(lab3)
-add_subdirectory(lab4)
-add_subdirectory(lab5)
-add_subdirectory(lab6)
-add_subdirectory(lab7)
-add_subdirectory(lab8)
-add_subdirectory(lab9)
-add_subdirectory(lab10)
+file(GLOB labs lab*)
 
+foreach(lab IN LISTS labs)
+    file(GLOB srcs ${lab}/*.c)
+
+    foreach(src IN LISTS srcs)
+        string(REGEX MATCH "/[^/]+$"
+                target ${src})
+
+        string(REGEX REPLACE "^/"
+                "" target
+                ${target})
+
+        string(REGEX REPLACE "\\.c$"
+                "" target
+                ${target})
+
+        add_executable(${target} ${src})
+    endforeach()
+endforeach()
