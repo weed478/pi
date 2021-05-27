@@ -19,14 +19,16 @@ if [ -z "$OUT_FILE" ] || [ ! -r "$OUT_FILE" ]; then
   exit 1
 fi
 
-DIFF=$(diff -EbBa --strip-trailing-cr <( "$EXEC" < "$IN_FILE" ) <( cat "$OUT_FILE" ))
+OUTPUT=$("$EXEC" < "$IN_FILE")
+
+DIFF=$(diff -EbBa --strip-trailing-cr <( echo "$OUTPUT" ) <( cat "$OUT_FILE" ))
 RET=$?
 
 if [ "$RET" -eq 0 ]; then
   exit 0
 else
   echo "Output:"
-  cat /tmp/pi_test.out
+  echo "$OUTPUT"
   echo "Expected:"
   cat "$OUT_FILE"
   echo "Diff:"
