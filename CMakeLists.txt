@@ -5,6 +5,8 @@ set(CMAKE_C_STANDARD 99)
 
 include(CTest)
 
+find_program(valgrind valgrind)
+
 file(GLOB labs lab*)
 
 foreach (lab IN LISTS labs)
@@ -44,6 +46,10 @@ foreach (lab IN LISTS labs)
             set(test_name "${lab_name}_${src_name}_test_${test_n}")
 
             add_test(NAME "${test_name}" COMMAND "${PROJECT_SOURCE_DIR}/run_tests.sh" "${exec}" "${test_in}" "${test_out}")
+
+            if (EXISTS ${valgrind})
+                add_test(NAME "${test_name}_valgrind" COMMAND sh -c "${valgrind} ${exec} < ${test_in}")
+            endif ()
 
             message("   - test ${test_n}")
         endforeach ()
