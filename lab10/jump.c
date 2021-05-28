@@ -45,6 +45,10 @@ void move_left(node_t *p);
 
 void unload(node_t *p);
 
+bool has_any_on_left(node_t *p);
+
+node_t* get_next_left(node_t *p);
+
 void solve(node_t *l);
 
 // !Algorithm
@@ -86,6 +90,46 @@ void unload(node_t *p)
     get_rel(p, 2)->v += k;
 }
 
+void move_right(node_t *p)
+{
+    p->v--;
+    get_rel(p, 1)->v--;
+    get_rel(p, 2)->v++;
+}
+
+void move_left(node_t *p)
+{
+    p->v--;
+    get_rel(p, -1)->v++;
+    get_rel(p, -2)->v++;
+}
+
+bool has_any_on_left(node_t *p)
+{
+    p = p->prev;
+    while (p)
+    {
+        if (p->v > 0)
+        {
+            return true;
+        }
+        p = p->prev;
+    }
+    return false;
+}
+
+node_t *get_next_left(node_t *p)
+{
+    p = p->prev;
+    while (p)
+    {
+        if (p->v > 0)
+            return p;
+        p = p->prev;
+    }
+    return NULL;
+}
+
 void solve(node_t *l)
 {
     l = get_first(l);
@@ -93,7 +137,8 @@ void solve(node_t *l)
     bool lap;
     do
     {
-        node_t *p = l;
+        node_t *p = get_first(l);
+        lap = false;
         while (p)
         {
             if (p->v >= 3)
@@ -131,13 +176,13 @@ void solve(node_t *l)
             unload(p);
             p = get_rel(p, 2);
         }
-        else if (!p->prev)
+        else if (!has_any_on_left(p))
         {
             break;
         }
         else
         {
-            p = p->prev;
+            p = get_next_left(p);
         }
     }
 }
@@ -257,18 +302,4 @@ node_t* get_index(node_t *l, int i)
 node_t *get_rel(node_t *p, int i)
 {
     return get_index(p, p->i + i);
-}
-
-void move_right(node_t *p)
-{
-    p->v--;
-    get_rel(p, 1)->v--;
-    get_rel(p, 2)->v++;
-}
-
-void move_left(node_t *p)
-{
-    p->v--;
-    get_rel(p, -1)->v++;
-    get_rel(p, -2)->v++;
 }
