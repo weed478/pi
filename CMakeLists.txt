@@ -30,7 +30,7 @@ foreach (lab IN LISTS labs)
         add_executable("${target}" "${src}")
         set(exec "${CMAKE_BINARY_DIR}/${target}")
 
-        message(" - ${src_name}")
+        set(n_tests 0)
 
         file(GLOB test_ins "${lab}/${src_name}.*.in")
 
@@ -51,7 +51,17 @@ foreach (lab IN LISTS labs)
                 add_test(NAME "${test_name}_valgrind" COMMAND sh -c "${valgrind} ${exec} < ${test_in}")
             endif ()
 
-            message("   - test ${test_n}")
+            math(EXPR n_tests "${n_tests} + 1")
         endforeach ()
+
+        if (${n_tests} GREATER 0)
+            if (${n_tests} EQUAL 1)
+                message(" - ${src_name} (${n_tests} test)")
+            else ()
+                message(" - ${src_name} (${n_tests} tests)")
+            endif ()
+        else ()
+            message(" - ${src_name}")
+        endif ()
     endforeach ()
 endforeach ()
