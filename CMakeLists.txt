@@ -5,7 +5,23 @@ set(CMAKE_C_STANDARD 99)
 
 include(CTest)
 
+find_program(bash bash)
+find_program(diff diff)
+
+if (NOT bash)
+    message("Will not add tests, bash not found")
+elseif (NOT diff)
+    message("Will not add tests, diff not found")
+endif ()
+
 find_program(valgrind valgrind)
+find_program(sh sh)
+
+if (NOT valgrind)
+    message("Will not add valgrind tests, valgrind not found")
+elseif (NOT sh)
+    message("Will not add valgrind tests, sh not found")
+endif ()
 
 file(GLOB labs lab*)
 
@@ -45,9 +61,11 @@ foreach (lab IN LISTS labs)
             set(test_out "${lab}/${src_name}.${test_n}.out")
             set(test_name "${lab_name}_${src_name}_test_${test_n}")
 
-            add_test(NAME "${test_name}" COMMAND "${PROJECT_SOURCE_DIR}/run_tests.sh" "${exec}" "${test_in}" "${test_out}")
+            if (bash AND diff)
+                add_test(NAME "${test_name}" COMMAND "${PROJECT_SOURCE_DIR}/run_tests.sh" "${exec}" "${test_in}" "${test_out}")
+            endif ()
 
-            if (EXISTS ${valgrind})
+            if (valgrind AND sh)
                 add_test(NAME "${test_name}_valgrind" COMMAND sh -c "${valgrind} ${exec} < ${test_in}")
             endif ()
 
